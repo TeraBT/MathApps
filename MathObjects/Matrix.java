@@ -31,12 +31,11 @@ public class Matrix {
         this(dimension1, dimension2, elements, 0.0);
     }
 
-    public Matrix(List<List<Double>> embeddedElements, int dimension2) {
+    private Matrix(List<List<Double>> embeddedElements, int dimension2) {
         this.dimension1 = embeddedElements.size();
         this.dimension2 = dimension2;
         this.elements = embeddedElements;
     }
-
 
     public int getDimension1() {
         return dimension1;
@@ -63,18 +62,23 @@ public class Matrix {
         return elements.get(dimension1-1).get(dimension2-1);
     }
 
-    public Matrix add(Matrix B) {
-        List<List<Double>> rows = new ArrayList<>();
-        for (int i = 1; i <= dimension1; ++i) {
-            List<Double> rowElements = new ArrayList<>();
-            for (int j = 1; j <= dimension2; ++j) {
-                rowElements.add(this.getElement(i, j) + B.getElement(i, j));
+    public Matrix add(Matrix B) throws DimensionMismatch {
+        if (dimension1 != B.getDimension1() || dimension2 != getDimension2()) {
+            throw new DimensionMismatch();
+        } else {
+            List<List<Double>> rows = new ArrayList<>();
+            for (int i = 1; i <= dimension1; ++i) {
+                List<Double> rowElements = new ArrayList<>();
+                for (int j = 1; j <= dimension2; ++j) {
+                    rowElements.add(this.getElement(i, j) + B.getElement(i, j));
+                }
+                rows.add(rowElements);
             }
-            rows.add(rowElements);
+            return new Matrix(rows, dimension2);
         }
-        return new Matrix(rows, dimension2);
     }
-    public Matrix add(Double scalar) {
+
+    public Matrix add(double scalar) {
         List<List<Double>> rows = new ArrayList<>();
         for (int i = 1; i <= dimension1; ++i) {
             List<Double> rowElements = new ArrayList<>();
@@ -86,21 +90,31 @@ public class Matrix {
         return new Matrix(rows, dimension2);
     }
 
-
-    public  Matrix subtract( Matrix B) {
+    public  Matrix subtract(Matrix B) throws DimensionMismatch {
         return add(B.multiply(-1.0));
+    }
+
+    public  Matrix subtract(double scalar) throws DimensionMismatch {
+        return add(scalar * -1.0);
     }
 
     public Matrix multiply( Matrix B) throws DimensionMismatch {
         if (dimension2 != B.getDimension1()) {
             throw new DimensionMismatch();
         } else {
+            List<List<Double>> rows = new ArrayList<>();
             for (int i = 1; i <= dimension1; ++i) {
+                List<Double> rowElements = new ArrayList<>();
                 for (int j = 1; j <= dimension2; ++j) {
-                    newElements.add(this.getElement(i, j) + scalar);
+                    double sum = 0;
+                    for (int r = 1; r <= dimension1; ++r) {
+                        sum += getElement(i, r) * B.getElement(r, j);
+                    }
+                    rowElements.add(sum);
                 }
+                rows.add(rowElements);
             }
-            return null;
+            return new Matrix(rows, B.getDimension2());
         }
     }
 
@@ -116,9 +130,9 @@ public class Matrix {
         return new Matrix(rows, dimension2);
     }
 
-
-    public  Matrix invert(Matrix A) {
-
+    public Matrix invert(Matrix A) {
+        // TODO: implement
+        return null;
     }
 
 }
