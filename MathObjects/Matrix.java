@@ -13,14 +13,14 @@ public class Matrix {
         this.dimension1 = dimension1;
         this.dimension2 = dimension2;
 
+        int counter = 0;
         for (int i = 1; i <= dimension1; ++i) {
             List<Double> row = new ArrayList<>();
             for (int j = 1; j <= dimension2; ++j) {
                 if (elements.isEmpty()) {
                     row.add(defaultValue);
                 } else {
-                    row.add(elements.get(0));
-                    elements.remove(0);
+                    row.add(elements.get(counter++));
                 }
             }
             this.elements.add(row);
@@ -62,9 +62,9 @@ public class Matrix {
         return elements.get(dimension1-1).get(dimension2-1);
     }
 
-    public Matrix add(Matrix B) throws DimensionMismatch {
+    public Matrix add(Matrix B) throws DimensionMismatchException {
         if (dimension1 != B.getDimension1() || dimension2 != getDimension2()) {
-            throw new DimensionMismatch();
+            throw new DimensionMismatchException();
         } else {
             List<List<Double>> rows = new ArrayList<>();
             for (int i = 1; i <= dimension1; ++i) {
@@ -90,17 +90,17 @@ public class Matrix {
         return new Matrix(rows, dimension2);
     }
 
-    public  Matrix subtract(Matrix B) throws DimensionMismatch {
+    public  Matrix subtract(Matrix B) throws DimensionMismatchException {
         return add(B.multiply(-1.0));
     }
 
-    public  Matrix subtract(double scalar) throws DimensionMismatch {
+    public  Matrix subtract(double scalar) throws DimensionMismatchException {
         return add(scalar * -1.0);
     }
 
-    public Matrix multiply( Matrix B) throws DimensionMismatch {
+    public Matrix multiply( Matrix B) throws DimensionMismatchException {
         if (dimension2 != B.getDimension1()) {
-            throw new DimensionMismatch();
+            throw new DimensionMismatchException();
         } else {
             List<List<Double>> rows = new ArrayList<>();
             for (int i = 1; i <= dimension1; ++i) {
@@ -118,7 +118,7 @@ public class Matrix {
         }
     }
 
-    public Matrix multiply(Double scalar) {
+    public Matrix multiply(double scalar) {
         List<List<Double>> rows = new ArrayList<>();
         for (int i = 1; i <= dimension1; ++i) {
             List<Double> rowElements = new ArrayList<>();
